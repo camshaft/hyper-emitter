@@ -44,6 +44,7 @@ exports.get = function(url, fn) {
 
 exports.submit = function(method, action, data, fn) {
   var lowerMethod = (method || 'GET').toLowerCase();
+  if (lowerMethod === 'delete') lowerMethod = 'del';
 
   var req = client[lowerMethod](action);
 
@@ -58,15 +59,13 @@ exports.submit = function(method, action, data, fn) {
       if (lowerMethod === 'get') return;
 
       // Hard refresh any resources that may have been affected
-      var urls = [action];
+      exports.refresh(action);
       each(exports.refreshHeaders, function(header) {
         var value = res.headers[header];
-        if (value && value !== action) urls.push(location);
+        if (value && value !== action) exports.refresh(value);
       });
 
       // TODO look for http://tools.ietf.org/html/draft-nottingham-linked-cache-inv-04
-
-      each(urls, exports.refresh);
     });
 };
 
