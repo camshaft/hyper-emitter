@@ -84,7 +84,7 @@ var inflights = {};
 
 exports.refresh = function(url, useCache) {
   // If someone is already making a request wait for theirs
-  if (inflights[url] || !emitter.hasListeners(url)) return;
+  if (inflights[url]) return;
 
   inflights[url] = true;
 
