@@ -7,8 +7,16 @@
   <script type="text/javascript">
     var client = require('hyper-emitter');
 
+    client.on('watch', function(url) {
+      console.log('WATCHING', url);
+    });
+
+    client.on('unwatch', function(url) {
+      console.log('UNWATCHING', url);
+    });
+
     // Make a request to a resource
-    client.get('/component.json', function(err, body) {
+    var unwatch = client.get('/component.json', function(err, body) {
       console.log('First subscriber', err, body);
     });
 
@@ -24,6 +32,10 @@
       // refresh the resource for all of the listeners
       client.refresh('/component.json');
     }, 2000);
+
+    setTimeout(function() {
+      unwatch();
+    }, 3000);
   </script>
 </body>
 </html>

@@ -13,6 +13,12 @@ var each = require('each');
 var emitter = new Emitter();
 
 /**
+ * Mixin exports with an Emitter
+ */
+
+Emitter(exports);
+
+/**
  * Get a resource and get called any time it changes
  *
  * @param {String} url
@@ -27,9 +33,12 @@ exports.get = function(url, fn) {
   emitter.on(url, handle);
   exports.refresh(url, true);
 
+  if (emitter.listeners(url).length === 1) exports.emit('watch', url);
+
   // Return a function to unsubscribe
   return function unsubscribe() {
     emitter.off(url, handle);
+    if (!emitter.hasListeners(url)) exports.emit('unwatch', url);
   };
 };
 
@@ -67,6 +76,17 @@ exports.submit = function(method, action, data, fn) {
 
       // TODO look for http://tools.ietf.org/html/draft-nottingham-linked-cache-inv-04
     });
+};
+
+/**
+ * Use a plugin
+ *
+ * @param {Function} fn
+ */
+
+exports.use = function(fn) {
+  fn(exports);
+  return exports;
 };
 
 /**
