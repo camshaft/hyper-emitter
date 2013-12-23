@@ -33,12 +33,12 @@ exports.get = function(url, fn) {
   emitter.on(url, handle);
   exports.refresh(url, true);
 
-  if (emitter.listeners(url).length === 1) exports.emit('watch', url);
+  if (emitter.listeners(url).length === 1) exports.emit('subscribe', url);
 
   // Return a function to unsubscribe
   return function unsubscribe() {
     emitter.off(url, handle);
-    if (!emitter.hasListeners(url)) exports.emit('unwatch', url);
+    if (!emitter.hasListeners(url)) exports.emit('unsubscribe', url);
   };
 };
 
